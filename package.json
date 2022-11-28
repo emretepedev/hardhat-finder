@@ -1,6 +1,6 @@
 {
   "name": "hardhat-finder",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Hardhat plugin to get compiler outputs of contracts",
   "repository": "github:emretepedev/hardhat-finder",
   "author": "Emre Tepe",
