@@ -32,7 +32,7 @@ This plugin adds the `finder` task to Hardhat:
 Usage: hardhat [GLOBAL OPTIONS] finder [OPTIONS] [path] [name] [...outputs]
 $ hardhat finder --prettify --colorify contracts/Example.sol Example abi bytecode
 
-@@@@@@@@@@contracts/Example.sol:Example@@@@@@@@@@
+@@@@@@@ contracts/Example.sol:Example @@@@@@@
 ======= Abi ======= (contracts/Example.sol:Example)
 [
   {
