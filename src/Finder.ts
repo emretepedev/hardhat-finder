@@ -1,7 +1,6 @@
-import chalk from "chalk";
 import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
 import { HardhatPluginError } from "hardhat/plugins";
-import {
+import type {
   Artifact,
   BuildInfo,
   HardhatRuntimeEnvironment,
@@ -10,7 +9,7 @@ import {
 import { normalize } from "path";
 
 import { PLUGIN_NAME } from "./constants";
-import {
+import type {
   CompilerOutputBytecode,
   CompilerOutputContract,
   ContractInfo,
@@ -19,13 +18,15 @@ import {
   SolcVersion,
   SourceDependencies,
 } from "./types";
+import { useWarningConsole } from "./utils";
 
-// TODO: add proxy for runtime. check `contractPath` and `contractName` exclude for `setFor`. If they are undefined throw a HardhatPluginError error.
+// TODO: add proxy for runtime. check `contractPath` and `contractName` exclude for `setFor`. If they are undefined, throw a HardhatPluginError error.
+// TODO: contractPath and contractName should be undefined (remove from config req)
 // TODO: add asm, function-debug, function-debug-runtime
 export class Finder {
-  private _hre: HardhatRuntimeEnvironment;
-  private _compiledOnce = false;
-  private _warnedOnce = false;
+  private hre: HardhatRuntimeEnvironment;
+  private compiledOnce = false;
+  private warnedOnce = false;
   public contractPath!: string;
   public contractName!: string;
   public contractFullyQualifiedName = String();
@@ -39,32 +40,31 @@ export class Finder {
     contractPath: string = hre.config.finder.contract.path,
     contractName: string = hre.config.finder.contract.name
   ) {
-    this._hre = hre;
+    this.hre = hre;
     this._setInitialContractInfo(contractPath, contractName);
   }
 
   public setFor = async (
     contractPath: string = this.contractPath,
     contractName: string = this.contractName,
-    noCompile: boolean = this._hre.config.finder.noCompile
+    // TODO: make options for this
+    noCompile: boolean = this.hre.config.finder.noCompile
   ) => {
-    if (!noCompile && !this._compiledOnce) {
-      this._compiledOnce = true;
+    if (!noCompile && !this.compiledOnce) {
+      this.compiledOnce = true;
 
-      for (const compiler of this._hre.config.solidity.compilers)
+      for (const compiler of this.hre.config.solidity.compilers) {
         compiler.settings.outputSelection["*"]["*"].push("storageLayout");
+      }
 
-      await this._hre.run(TASK_COMPILE, { noFinder: true, quiet: true });
+      await this.hre.run(TASK_COMPILE, { noFinder: true, quiet: true });
     } else {
-      if (!this._compiledOnce && !this._warnedOnce) {
-        this._warnedOnce = true;
+      if (!this.compiledOnce && !this.warnedOnce) {
+        this.warnedOnce = true;
 
-        console.log(
-          chalk.yellow(
-            `Warning in plugin ${PLUGIN_NAME}: ` +
-              "\nThese functions do not work as expected when the 'noCompile' option is set to true:\n" +
-              "- storage-layout / getStorageLayout()"
-          )
+        useWarningConsole(
+          "These arguments or functions do NOT work as expected when 'noCompile' option is true:\n" +
+            "- storage-layout / getStorageLayout()"
         );
       }
     }
@@ -74,12 +74,14 @@ export class Finder {
     this.contractArtifact = this.getArtifact();
     this.contractBuildInfo = await this.getBuildInfo();
     this.contractOutput =
-      this.contractBuildInfo.output.contracts[contractPath][contractName];
+      this.contractBuildInfo.output.contracts[this.contractPath][
+        this.contractName
+      ];
     this.contractMetadata = this.getMetadata();
   };
 
   public getArtifact = (): Artifact => {
-    const artifact = this._hre.artifacts.readArtifactSync(
+    const artifact = this.hre.artifacts.readArtifactSync(
       this.contractFullyQualifiedName
     );
 
@@ -87,11 +89,11 @@ export class Finder {
   };
 
   public getBuildInfo = async (): Promise<BuildInfo> => {
-    const buildInfo = await this._hre.artifacts.getBuildInfo(
+    const buildInfo = await this.hre.artifacts.getBuildInfo(
       this.contractFullyQualifiedName
     );
 
-    if (!buildInfo)
+    if (!buildInfo) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
         "\nThere is no Build Info for target contract.\n" +
@@ -99,6 +101,7 @@ export class Finder {
           "Make sure the artifacts exist.\n" +
           "Compile with hardhat or re-run this task without --no-compile flag to create new artifacts."
       );
+    }
 
     return buildInfo;
   };
@@ -265,35 +268,6 @@ export class Finder {
     return userdoc;
   };
 
-  private _setInitialContractInfo = (
-    contractPath: string,
-    contractName: string
-  ) => {
-    this._validate(
-      (this.contractPath = normalize(contractPath)),
-      (this.contractName = contractName)
-    );
-    this.contractFullyQualifiedName = this.getFullyQualifiedName();
-  };
-
-  private _validate = (contractPath: string, contractName: string) => {
-    const contractPathRegexp = new RegExp("\\.sol$");
-    if (!contractPathRegexp.test(contractPath))
-      throw new HardhatPluginError(
-        PLUGIN_NAME,
-        `\nInvalid Path File: '${contractPath}'.\n` +
-          "Make sure the contract path points to a '.sol' file.\n" +
-          "Example: contracts/Foo.sol"
-      );
-
-    const contractNameRegexp = new RegExp("^[\\w\\d$]+$", "i");
-    if (!contractNameRegexp.test(contractName))
-      throw new HardhatPluginError(
-        PLUGIN_NAME,
-        `\nInvalid contract name: '${contractName}'.`
-      );
-  };
-
   public getGeneratedSources = () => {
     const generatedSources = (
       this.contractOutput.evm.bytecode as CompilerOutputBytecode
@@ -321,8 +295,35 @@ export class Finder {
 
     return sourceMapRuntime;
   };
-}
 
-// solc outputs: abi,asm,ast,bin,bin-runtime,devdoc,function-debug,function-debug-runtime
-// ++ generated-sources,generated-sources-runtime,hashes,metadata,opcodes,srcmap
-// ++ srcmap-runtime,storage-layout,userdoc
+  private _setInitialContractInfo = (
+    contractPath: string,
+    contractName: string
+  ) => {
+    this._validate(
+      (this.contractPath = normalize(contractPath)),
+      (this.contractName = contractName)
+    );
+    this.contractFullyQualifiedName = this.getFullyQualifiedName();
+  };
+
+  private _validate = (contractPath: string, contractName: string) => {
+    const contractPathRegexp = new RegExp("\\.sol$");
+    if (!contractPathRegexp.test(contractPath)) {
+      throw new HardhatPluginError(
+        PLUGIN_NAME,
+        `\nInvalid Path File: '${contractPath}'.\n` +
+          "Make sure the contract path points to a '.sol' file.\n" +
+          "Example: contracts/Foo.sol"
+      );
+    }
+
+    const contractNameRegexp = new RegExp("^[\\w\\d$]+$", "i");
+    if (!contractNameRegexp.test(contractName)) {
+      throw new HardhatPluginError(
+        PLUGIN_NAME,
+        `\nInvalid contract name: '${contractName}'.`
+      );
+    }
+  };
+}
