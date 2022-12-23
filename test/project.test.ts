@@ -13,7 +13,8 @@ describe("Integration tests", function () {
       assert.instanceOf(this.hre.finder, Finder);
     });
 
-    it("The finder field should get fully qualified name", function () {
+    it("The finder field should get fully qualified name", async function () {
+      await this.hre.finder.setFor();
       assert.equal(
         this.hre.finder.getFullyQualifiedName(),
         "contracts/Example.sol:Example"
@@ -38,10 +39,10 @@ describe("Unit tests", function () {
     useEnvironment("hardhat-project");
 
     describe("getFullyQualifiedName", function () {
-      it("Should get fully qualified name", function () {
-        const finder = new Finder(this.hre);
+      it("Should get fully qualified name", async function () {
+        await this.hre.finder.setFor();
         assert.equal(
-          finder.getFullyQualifiedName(),
+          this.hre.finder.getFullyQualifiedName(),
           "contracts/Example.sol:Example"
         );
       });
