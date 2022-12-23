@@ -1,9 +1,9 @@
-import { HardhatUserConfig } from "hardhat/types";
+import type { HardhatUserConfig } from "hardhat/types";
 
 import "../../../src/index";
 
 const config: HardhatUserConfig = {
-  solidity: "0.7.3",
+  solidity: "0.8.0",
   defaultNetwork: "hardhat",
   finder: {
     contract: {
