@@ -1,17 +1,17 @@
-import type { ActionType } from "hardhat/types";
+import type { ActionType, TaskArguments } from "hardhat/types";
 
 import { TASK_FINDER } from "../constants";
 import type { FinderTaskArguments } from "../types";
 
-export const finderCompileAction: ActionType<{ noFinder: boolean }> = async (
-  { noFinder },
+export const finderCompileAction: ActionType<TaskArguments> = async (
+  taskArgs: TaskArguments,
   { run, config },
   runSuper
 ) => {
-  await runSuper();
+  await runSuper(taskArgs);
 
   if (
-    !noFinder &&
+    !taskArgs.noFinder &&
     config.finder.runOnCompile &&
     config.finder.contract?.path &&
     config.finder.contract?.name
