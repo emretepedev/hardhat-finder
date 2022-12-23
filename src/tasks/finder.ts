@@ -56,7 +56,7 @@ export const finderAction: ActionType<FinderTaskArguments> = async (
 
   await finder.setFor(path, name, noCompile);
   const fullyQualifiedName = finder.getFullyQualifiedName();
-  const contractsInfo: ContractInfo[] = [
+  const contractsInfo: Partial<ContractInfo>[] = [
     {
       path,
       name,
@@ -116,8 +116,8 @@ const prepareTaskArguments = (
   }: FinderTaskArguments
 ) => {
   return {
-    path: path || finderConfig.contract.path,
-    name: name || finderConfig.contract.name,
+    path: path || finderConfig.contract?.path,
+    name: name || finderConfig.contract?.name,
     outputs:
       outputs ||
       (finderConfig.outputs.length > 0 && finderConfig.outputs) ||

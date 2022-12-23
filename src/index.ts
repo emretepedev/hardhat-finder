@@ -1,7 +1,6 @@
 import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
 import { extendConfig, extendEnvironment, task, types } from "hardhat/config";
 import { lazyObject } from "hardhat/plugins";
-import type { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { finderConfigExtender } from "./config";
 import { SUPPORTED_OUTPUTS, TASK_FINDER } from "./constants";
@@ -12,15 +11,8 @@ import "./type-extensions";
 
 extendConfig(finderConfigExtender);
 
-extendEnvironment((hre: HardhatRuntimeEnvironment) => {
-  hre.finder = lazyObject(
-    () =>
-      new Finder(
-        hre,
-        hre.config.finder.contract.path,
-        hre.config.finder.contract.name
-      )
-  );
+extendEnvironment((hre) => {
+  hre.finder = lazyObject(() => new Finder(hre));
 });
 
 task(TASK_FINDER)

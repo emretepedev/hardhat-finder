@@ -21,7 +21,6 @@ import type {
 import { useWarningConsole } from "./utils";
 
 // TODO: add proxy for runtime. check `contractPath` and `contractName` exclude for `setFor`. If they are undefined, throw a HardhatPluginError error.
-// TODO: contractPath and contractName should be undefined (remove from config req)
 // TODO: add asm, function-debug, function-debug-runtime
 export class Finder {
   private hre: HardhatRuntimeEnvironment;
@@ -35,21 +34,21 @@ export class Finder {
   public contractMetadata = new Object() as Metadata;
   public contractOutput = new Object() as CompilerOutputContract;
 
-  constructor(
-    hre: HardhatRuntimeEnvironment,
-    contractPath: string = hre.config.finder.contract.path,
-    contractName: string = hre.config.finder.contract.name
-  ) {
+  constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
-    this._setInitialContractInfo(contractPath, contractName);
   }
 
   public setFor = async (
-    contractPath: string = this.contractPath,
-    contractName: string = this.contractName,
+    contractPath?: string,
+    contractName?: string,
     // TODO: make options for this
     noCompile: boolean = this.hre.config.finder.noCompile
   ) => {
+    contractPath ||= this.hre.config.finder.contract?.path;
+    contractName ||= this.hre.config.finder.contract?.name;
+
+    this._setInitialContractInfo(contractPath, contractName);
+
     if (!noCompile && !this.compiledOnce) {
       this.compiledOnce = true;
 
@@ -68,8 +67,6 @@ export class Finder {
         );
       }
     }
-
-    this._setInitialContractInfo(contractPath, contractName);
 
     this.contractArtifact = this.getArtifact();
     this.contractBuildInfo = await this.getBuildInfo();
@@ -296,18 +293,15 @@ export class Finder {
     return sourceMapRuntime;
   };
 
-  private _setInitialContractInfo = (
-    contractPath: string,
-    contractName: string
-  ) => {
+  private _setInitialContractInfo = (contractPath: any, contractName: any) => {
     this._validate(
-      (this.contractPath = normalize(contractPath)),
+      (this.contractPath = contractPath && normalize(contractPath)),
       (this.contractName = contractName)
     );
     this.contractFullyQualifiedName = this.getFullyQualifiedName();
   };
 
-  private _validate = (contractPath: string, contractName: string) => {
+  private _validate = (contractPath: any, contractName: any) => {
     const contractPathRegexp = new RegExp("\\.sol$");
     if (!contractPathRegexp.test(contractPath)) {
       throw new HardhatPluginError(

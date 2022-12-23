@@ -4,7 +4,7 @@ import type {
 } from "hardhat/types";
 
 export interface FinderConfig {
-  contract: {
+  contract?: {
     path: string;
     name: string;
   };
@@ -20,7 +20,7 @@ export interface FinderConfig {
 }
 
 export interface FinderUserConfig {
-  contract: {
+  contract?: {
     path: string;
     name: string;
   };
