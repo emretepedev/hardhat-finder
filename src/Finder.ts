@@ -41,8 +41,8 @@ export class Finder {
   public setFor = async (
     contractPath?: string,
     contractName?: string,
-    // TODO: make options for this
-    noCompile: boolean = this.hre.config.finder.noCompile
+    noCompile: boolean = this.hre.config.finder.noCompile,
+    compilerTaskArgs: any = {}
   ) => {
     contractPath ||= this.hre.config.finder.contract?.path;
     contractName ||= this.hre.config.finder.contract?.name;
@@ -56,7 +56,8 @@ export class Finder {
         compiler.settings.outputSelection["*"]["*"].push("storageLayout");
       }
 
-      await this.hre.run(TASK_COMPILE, { noFinder: true, quiet: true });
+      compilerTaskArgs.noFinder = true;
+      await this.hre.run(TASK_COMPILE, compilerTaskArgs);
     } else {
       if (!this.compiledOnce && !this.warnedOnce) {
         this.warnedOnce = true;
