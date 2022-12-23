@@ -29,7 +29,8 @@
     "build": "tsc",
     "watch": "tsc -w",
     "prepublishOnly": "npm run build",
-    "finder": "cd ./test/fixture-projects/hardhat-project/ && yarn run hardhat finder"
+    "finder": "cd ./test/fixture-projects/hardhat-project/ && yarn run hardhat finder",
+    "test-hardhat": "cd ./test/fixture-projects/hardhat-project/ && yarn run hardhat"
   },
   "files": [
     "dist/src/",
