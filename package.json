@@ -3,7 +3,11 @@
   "version": "1.0.1",
   "description": "Hardhat plugin to get compiler outputs of contracts",
   "repository": "github:emretepedev/hardhat-finder",
-  "author": "Emre Tepe",
+  "author": {
+    "name": "Emre Tepe",
+    "email": "emretepedev@gmail.com",
+    "url": "https://emretepedev.github.io/"
+  },
   "license": "MIT",
   "main": "dist/src/index.js",
   "types": "dist/src/index.d.ts",
