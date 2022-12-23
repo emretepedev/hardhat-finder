@@ -1,6 +1,6 @@
 # hardhat-finder
 
-Hardhat plugin to get compiler outputs of contracts.
+Hardhat plugin to find compiler outputs of contracts.
 
 ## What
 
