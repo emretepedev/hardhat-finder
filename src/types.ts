@@ -1,4 +1,4 @@
-import {
+import type {
   CompilerOutputBytecode as BaseCompilerOutputBytecode,
   CompilerOutputContract as BaseCompilerOutputContract,
 } from "hardhat/types";
@@ -36,16 +36,16 @@ export interface FinderUserConfig {
 }
 
 export interface FinderTaskArguments {
-  path: string;
-  name: string;
-  outputs: string[];
-  depth: number;
-  maxStringLength: number;
-  includeDependencies: boolean;
-  colorify: boolean;
-  prettify: boolean;
-  compact: boolean;
-  noCompile: boolean;
+  path?: string;
+  name?: string;
+  outputs?: string[];
+  depth?: number;
+  maxStringLength?: number;
+  includeDependencies?: boolean;
+  colorify?: boolean;
+  prettify?: boolean;
+  compact?: boolean;
+  noCompile?: boolean;
 }
 
 export interface Metadata {

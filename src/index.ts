@@ -1,13 +1,13 @@
 import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
 import { extendConfig, extendEnvironment, task, types } from "hardhat/config";
 import { lazyObject } from "hardhat/plugins";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
+import type { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { finderConfigExtender } from "./config";
 import { SUPPORTED_OUTPUTS, TASK_FINDER } from "./constants";
 import { Finder } from "./Finder";
-import { finderCompile } from "./tasks/compile";
-import { finder } from "./tasks/finder";
+import { finderCompileAction } from "./tasks/compile";
+import { finderAction } from "./tasks/finder";
 import "./type-extensions";
 
 extendConfig(finderConfigExtender);
@@ -60,11 +60,11 @@ task(TASK_FINDER)
   .addFlag("compact", "Compact the outputs.")
   .addFlag("noCompile", "Don't compile before running this task.")
   .setDescription("Find various outputs of any existing contracts.")
-  .setAction(finder);
+  .setAction(finderAction);
 
 task(TASK_COMPILE)
   .addFlag(
     "noFinder",
-    "Don't run Finder after running this task, even if finder.runOnCompile.enabled option is true"
+    "Don't run Finder after running this task, even if finder.runOnCompile option is true"
   )
-  .setAction(finderCompile);
+  .setAction(finderCompileAction);

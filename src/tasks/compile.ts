@@ -1,9 +1,9 @@
-import { ActionType } from "hardhat/types";
+import type { ActionType } from "hardhat/types";
 
 import { TASK_FINDER } from "../constants";
-import { FinderTaskArguments } from "../types";
+import type { FinderTaskArguments } from "../types";
 
-export const finderCompile: ActionType<{ noFinder: boolean }> = async (
+export const finderCompileAction: ActionType<{ noFinder: boolean }> = async (
   { noFinder },
   { run, config },
   runSuper
@@ -11,13 +11,12 @@ export const finderCompile: ActionType<{ noFinder: boolean }> = async (
   await runSuper();
 
   if (!noFinder && config.finder.runOnCompile && config.finder.contract) {
-    const finderTaskArguments: Partial<FinderTaskArguments> = {
+    const finderTaskArguments: FinderTaskArguments = {
       path: config.finder.contract.path,
       name: config.finder.contract.name,
       outputs: config.finder.outputs,
       noCompile: true,
     };
-
     await run(TASK_FINDER, finderTaskArguments);
   }
 };

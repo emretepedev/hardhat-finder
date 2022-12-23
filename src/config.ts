@@ -1,4 +1,4 @@
-import { ConfigExtender } from "hardhat/types";
+import type { ConfigExtender } from "hardhat/types";
 import { cloneDeep } from "lodash";
 
 import {
@@ -12,9 +12,9 @@ import {
   DEFAULT_PRETTIFY,
   DEFAULT_RUN_ON_COMPILE,
 } from "./constants";
-import { FinderConfig } from "./types";
+import type { FinderConfig } from "./types";
 
-const getDefaultFinderConfig = () => ({
+const getDefaultConfig = () => ({
   outputs: DEFAULT_OUTPUTS,
   depth: DEFAULT_DEPTH,
   maxStringLength: DEFAULT_MAX_STRING_LENGTH,
@@ -27,11 +27,12 @@ const getDefaultFinderConfig = () => ({
 });
 
 export const finderConfigExtender: ConfigExtender = (config, userConfig) => {
-  const defaultFinderConfig = getDefaultFinderConfig();
+  const defaultConfig = getDefaultConfig();
 
-  if (undefined !== userConfig.finder) {
-    const customFinderConfig = cloneDeep(userConfig.finder);
-
-    config.finder = { ...defaultFinderConfig, ...customFinderConfig };
-  } else config.finder = defaultFinderConfig as FinderConfig;
+  if (userConfig.finder !== undefined) {
+    const customConfig = cloneDeep(userConfig.finder);
+    config.finder = { ...defaultConfig, ...customConfig };
+  } else {
+    config.finder = defaultConfig as FinderConfig;
+  }
 };
