@@ -1,3 +1,4 @@
+// tslint:disable-next-line no-implicit-dependencies
 import type { HardhatUserConfig } from "hardhat/types";
 
 import "../../../src/index";
