@@ -6,7 +6,7 @@ import type { FinderConfig, FinderUserConfig } from "./types";
 
 declare module "hardhat/types/config" {
   export interface HardhatUserConfig {
-    finder: FinderUserConfig;
+    finder?: FinderUserConfig;
   }
   export interface HardhatConfig {
     finder: FinderConfig;
