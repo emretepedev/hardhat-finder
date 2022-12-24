@@ -8,10 +8,10 @@ import type { Finder } from "./Finder";
 export const uppercaseFirstChar = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
-export const formatOutputName = (str: string, seperator: string = "-") => {
-  const words = str.split(seperator);
-  const uppercasedWords = words.map((word) => uppercaseFirstChar(word));
-  const humanReadableFormat = uppercasedWords.join(" ");
+export const formatOutputName = (str: string, separator: string = "-") => {
+  const words = str.split(separator);
+  const uppercaseWords = words.map((word) => uppercaseFirstChar(word));
+  const humanReadableFormat = uppercaseWords.join(" ");
   const searchRegexp = new RegExp(" ", "g");
   const pascalCaseFormat = humanReadableFormat.replace(searchRegexp, "");
 
@@ -21,22 +21,36 @@ export const formatOutputName = (str: string, seperator: string = "-") => {
   };
 };
 
-export const getFinderProxy = (finder: Finder) => {
+export const getFinderProxy = (finder: Finder): Finder => {
   const handler = {
     get(target: any, property: string) {
       try {
-        return target[property]();
-      } catch (error: any) {
-        if (!(error instanceof HardhatPluginError))
+        if (
+          property !== "setFor" &&
+          (!target.contractPath || !target.contractName)
+        ) {
           throw new HardhatPluginError(
             PLUGIN_NAME,
-            `\nSomething went wrong in logic for '${property}' in ${target.constructor.name} class\n` +
-              `Error:\n` +
-              `name: ${error.name}\n` +
-              `message: ${error.message}\n` +
-              `stack: ${error.stack}`,
-            error
+            `\nYou have to set 'config.finder.contract' option or run 'Finder.setFor(...args)' function before using ${property} function.`
           );
+        }
+
+        // @ts-ignore
+        return Reflect.get(...arguments);
+      } catch (error: any) {
+        if (error instanceof HardhatPluginError) {
+          throw error;
+        }
+
+        throw new HardhatPluginError(
+          PLUGIN_NAME,
+          `\nSomething went wrong with '${property}' in ${target.constructor.name} class\n` +
+            `Error:\n` +
+            `name: ${error?.name}\n` +
+            `message: ${error?.message}\n` +
+            `stack: ${error?.stack}`,
+          error
+        );
       }
     },
   };

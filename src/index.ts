@@ -8,26 +8,22 @@ import { Finder } from "./Finder";
 import { finderCompileAction } from "./tasks/compile";
 import { finderAction } from "./tasks/finder";
 import "./type-extensions";
+import { getFinderProxy } from "./utils";
 
 extendConfig(finderConfigExtender);
 
 extendEnvironment((hre) => {
-  hre.finder = lazyObject(() => new Finder(hre));
+  hre.finder = lazyObject(() => getFinderProxy(new Finder(hre)));
 });
 
 task(TASK_FINDER)
-  .addOptionalPositionalParam(
+  .addOptionalParam(
     "path",
     "Path to the contract file.",
     undefined,
     types.inputFile
   )
-  .addOptionalPositionalParam(
-    "name",
-    "Name of the contract.",
-    undefined,
-    types.string
-  )
+  .addOptionalParam("name", "Name of the contract.", undefined, types.string)
   .addOptionalVariadicPositionalParam(
     "outputs",
     `Types of output the contract wants to print. All supported outputs: ${SUPPORTED_OUTPUTS.toString()}`,

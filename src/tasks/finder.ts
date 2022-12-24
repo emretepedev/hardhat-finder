@@ -89,8 +89,8 @@ export const finderAction: ActionType<FinderTaskArguments> = async (
       const outputName = formatOutputName(output);
       const functionName = `get${outputName.pascalCaseFormat}`;
       const content = prettify
-        ? await finderProxy[functionName]
-        : JSON.stringify(await finderProxy[functionName]);
+        ? await (finderProxy as any)[functionName]()
+        : JSON.stringify(await (finderProxy as any)[functionName]());
 
       useConsole(
         `======= ${outputName.humanReadableFormat} ======= (${finder.contractFullyQualifiedName})`
