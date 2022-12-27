@@ -31,7 +31,7 @@ export const getFinderProxy = (finder: Finder): Finder => {
         ) {
           throw new HardhatPluginError(
             PLUGIN_NAME,
-            `\nYou have to set 'config.finder.contract' option or run 'Finder.setFor(...args)' function before using ${property} function.`
+            `\nYou have to set 'config.finder.contract' option or run 'Finder.setFor()' function before using ${property} function.`
           );
         }
 
