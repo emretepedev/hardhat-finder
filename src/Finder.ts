@@ -20,7 +20,6 @@ import type {
 } from "./types";
 import { useWarningConsole } from "./utils";
 
-// TODO: add proxy for runtime. check `contractPath` and `contractName` exclude for `setFor`. If they are undefined, throw a HardhatPluginError error.
 // TODO: add asm, function-debug, function-debug-runtime
 export class Finder {
   private hre: HardhatRuntimeEnvironment;

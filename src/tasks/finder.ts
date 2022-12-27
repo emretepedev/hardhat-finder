@@ -4,12 +4,7 @@ import type { InspectOptions } from "util";
 
 import { PLUGIN_NAME, SUPPORTED_OUTPUTS } from "../constants";
 import type { ContractInfo, FinderConfig, FinderTaskArguments } from "../types";
-import {
-  formatOutputName,
-  getFinderProxy,
-  useConsole,
-  useInspectConsole,
-} from "../utils";
+import { formatOutputName, useConsole, useInspectConsole } from "../utils";
 
 export const finderAction: ActionType<FinderTaskArguments> = async (
   {
@@ -76,7 +71,6 @@ export const finderAction: ActionType<FinderTaskArguments> = async (
     compact,
   };
 
-  const finderProxy = getFinderProxy(finder);
   for (const contractInfo of contractsInfo) {
     useConsole(`@@@@@@@ ${contractInfo.fullyQualifiedName} @@@@@@@`);
     if (
@@ -89,8 +83,8 @@ export const finderAction: ActionType<FinderTaskArguments> = async (
       const outputName = formatOutputName(output);
       const functionName = `get${outputName.pascalCaseFormat}`;
       const content = prettify
-        ? await (finderProxy as any)[functionName]()
-        : JSON.stringify(await (finderProxy as any)[functionName]());
+        ? await (finder as any)[functionName]()
+        : JSON.stringify(await (finder as any)[functionName]());
 
       useConsole(
         `======= ${outputName.humanReadableFormat} ======= (${finder.contractFullyQualifiedName})`

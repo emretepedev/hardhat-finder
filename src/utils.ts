@@ -45,7 +45,7 @@ export const getFinderProxy = (finder: Finder): Finder => {
         throw new HardhatPluginError(
           PLUGIN_NAME,
           `\nSomething went wrong with '${property}' in ${target.constructor.name} class\n` +
-            `Error:\n` +
+            "Error:\n" +
             `name: ${error?.name}\n` +
             `message: ${error?.message}\n` +
             `stack: ${error?.stack}`,
