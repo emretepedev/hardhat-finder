@@ -8,9 +8,19 @@ This plugin will help you with reviews and implementations by giving compiler ou
 
 ## Installation
 
+Install the plugin via `npm`:
+
 ```bash
 npm install hardhat-finder
 ```
+
+Install the plugin via `yarn`:
+
+```bash
+yarn add hardhat-finder
+```
+
+---
 
 Import the plugin in your `hardhat.config.js`:
 
