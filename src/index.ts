@@ -21,6 +21,7 @@ task(TASK_FINDER)
     "path",
     "Path to the contract file.",
     undefined,
+    // TODO: change to types.string for flexibility because of custom root and contracts folder structure. (or get root and contracts file and replace it in code.)
     types.inputFile
   )
   .addOptionalParam("name", "Name of the contract.", undefined, types.string)
