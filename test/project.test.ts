@@ -20,6 +20,17 @@ describe("Integration tests", function () {
         "contracts/Example.sol:Example"
       );
     });
+
+    it("The finder field should get fully qualified name", async function () {
+      await this.hre.finder.setFor(
+        "contracts/ExampleLibrary.sol",
+        "ExampleLibrary"
+      );
+      assert.equal(
+        this.hre.finder.getFullyQualifiedName(),
+        "contracts/ExampleLibrary.sol:ExampleLibrary"
+      );
+    });
   });
 
   describe("HardhatConfig extension", function () {
