@@ -27,11 +27,11 @@ export class Finder {
   private warnedOnce = false;
   public contractPath!: string;
   public contractName!: string;
-  public contractFullyQualifiedName = String();
-  public contractArtifact = new Object() as Artifact;
-  public contractBuildInfo = new Object() as BuildInfo;
-  public contractMetadata = new Object() as Metadata;
-  public contractOutput = new Object() as CompilerOutputContract;
+  public contractFullyQualifiedName!: string;
+  public contractArtifact!: Artifact;
+  public contractBuildInfo!: BuildInfo;
+  public contractMetadata!: Metadata;
+  public contractOutput!: CompilerOutputContract;
 
   constructor(hre: HardhatRuntimeEnvironment) {
     this.hre = hre;
@@ -78,11 +78,22 @@ export class Finder {
   };
 
   public getArtifact = (): Artifact => {
-    const artifact = this.hre.artifacts.readArtifactSync(
-      this.contractFullyQualifiedName
-    );
+    try {
+      const artifact = this.hre.artifacts.readArtifactSync(
+        this.contractFullyQualifiedName
+      );
 
-    return artifact;
+      return artifact;
+    } catch (error: any) {
+      throw new HardhatPluginError(
+        PLUGIN_NAME,
+        "\nThere is no Artifact for target contract.\n" +
+          "Make sure the contract path and name are valid.\n" +
+          "Make sure the artifacts exist.\n" +
+          "Compile with hardhat or re-run this task without --no-compile flag to create new artifacts.",
+        error
+      );
+    }
   };
 
   public getBuildInfo = async (): Promise<BuildInfo> => {
@@ -115,8 +126,12 @@ export class Finder {
     let metadata: Metadata;
     try {
       metadata = JSON.parse(metadataStr);
-    } catch {
-      throw new HardhatPluginError(PLUGIN_NAME, "\nInvalid metadata file");
+    } catch (error: any) {
+      throw new HardhatPluginError(
+        PLUGIN_NAME,
+        "\nInvalid metadata file",
+        error
+      );
     }
 
     return metadata;
