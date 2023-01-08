@@ -39,7 +39,7 @@ import "hardhat-finder";
 This plugin adds the `finder` task to Hardhat:
 
 ```
-Usage: hardhat [GLOBAL OPTIONS] finder [OPTIONS] [path] [name] [...outputs]
+Usage: hardhat [GLOBAL OPTIONS] finder [--colorify] [--compact] [--depth <INT>] [--include-dependencies] [--max-string-length <INT>] [--name <STRING>] [--no-compile] [--path <INPUTFILE>] [--prettify] [...outputs]
 $ hardhat finder --prettify --colorify contracts/Example.sol Example abi bytecode
 
 @@@@@@@ contracts/Example.sol:Example @@@@@@@
