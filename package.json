@@ -23,8 +23,8 @@
     "finder"
   ],
   "scripts": {
-    "lint:fix": "prettier --write 'src/**/*.{js,ts}' 'test/**/*.{js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
-    "lint": "tslint --config tslint.json --project tsconfig.json",
+    "lint:fix": "prettier --write '**/{*,''}.{json,js,ts}' && tslint --fix --config tslint.json --project tsconfig.json",
+    "lint": "cspell lint --dot --gitignore '**/{*,''}{.,''}*' && tslint --config tslint.json --project tsconfig.json && prettier --check '**/{*,''}.{json,js,ts}'",
     "test": "mocha --exit --recursive 'test/**/*.test.ts'",
     "build": "tsc && tsc-alias",
     "watch": "tsc -w",
@@ -45,6 +45,7 @@
     "@types/mocha": "^10.0.1",
     "@types/node": "^16.0.0",
     "chai": "^4.3.7",
+    "cspell": "^6.18.1",
     "hardhat": "^2.0.4",
     "mocha": "^10.2.0",
     "prettier": "^2.8.2",
