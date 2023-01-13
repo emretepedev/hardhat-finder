@@ -234,7 +234,7 @@ export class Finder {
   };
 
   public getAst = (): any => {
-    const ast = this.contractBuildInfo.output.sources[this.contractPath!!].ast;
+    const ast = this.contractBuildInfo.output.sources[this.contractPath].ast;
 
     return ast;
   };

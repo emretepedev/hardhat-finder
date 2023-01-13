@@ -135,7 +135,7 @@ const validateTaskArguments = ({ outputs }: FinderTaskArguments) => {
       throw new HardhatPluginError(
         PLUGIN_NAME,
         `\nUnsupported Output: '${output}'.\n` +
-          `All supported contract outputs: ${SUPPORTED_OUTPUTS}`
+          `All supported contract outputs: ${SUPPORTED_OUTPUTS.toString()}`
       );
     }
   });

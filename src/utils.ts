@@ -7,7 +7,7 @@ import type { Finder } from "~/extensions/Finder";
 export const uppercaseFirstChar = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);
 
-export const formatOutputName = (str: string, separator: string = "-") => {
+export const formatOutputName = (str: string, separator = "-") => {
   const words = str.split(separator);
   const uppercaseWords = words.map((word) => uppercaseFirstChar(word));
   const humanReadableFormat = uppercaseWords.join(" ");
