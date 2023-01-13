@@ -1,10 +1,9 @@
 import { HardhatPluginError } from "hardhat/plugins";
 import type { ActionType } from "hardhat/types";
 import type { InspectOptions } from "util";
-
-import { PLUGIN_NAME, SUPPORTED_OUTPUTS } from "../constants";
-import type { ContractInfo, FinderConfig, FinderTaskArguments } from "../types";
-import { formatOutputName, useConsole, useInspectConsole } from "../utils";
+import { PLUGIN_NAME, SUPPORTED_OUTPUTS } from "~/constants";
+import type { ContractInfo, FinderConfig, FinderTaskArguments } from "~/types";
+import { formatOutputName, useConsole, useInspectConsole } from "~/utils";
 
 export const finderAction: ActionType<FinderTaskArguments> = async (
   {

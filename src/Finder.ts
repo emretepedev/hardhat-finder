@@ -7,8 +7,7 @@ import type {
   LinkReferences,
 } from "hardhat/types";
 import { normalize } from "path";
-
-import { PLUGIN_NAME } from "./constants";
+import { PLUGIN_NAME } from "~/constants";
 import type {
   CompilerOutputBytecode,
   CompilerOutputContract,
@@ -17,8 +16,8 @@ import type {
   Metadata,
   SolcVersion,
   SourceDependencies,
-} from "./types";
-import { useWarningConsole } from "./utils";
+} from "~/types";
+import { useWarningConsole } from "~/utils";
 
 // TODO: add asm, function-debug, function-debug-runtime
 export class Finder {

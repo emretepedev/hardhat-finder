@@ -1,9 +1,8 @@
 import chalk from "chalk";
 import { HardhatPluginError } from "hardhat/plugins";
 import { inspect, type InspectOptions } from "util";
-
-import { PLUGIN_NAME } from "./constants";
-import type { Finder } from "./Finder";
+import { PLUGIN_NAME } from "~/constants";
+import type { Finder } from "~/Finder";
 
 export const uppercaseFirstChar = (str: string) =>
   str.charAt(0).toUpperCase() + str.slice(1);

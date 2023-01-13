@@ -1,7 +1,6 @@
 // tslint:disable-next-line no-implicit-dependencies
 import type { HardhatUserConfig } from "hardhat/types";
-
-import "../../../src/index";
+import "~/index";
 
 const config: HardhatUserConfig = {
   solidity: "0.8.0",
