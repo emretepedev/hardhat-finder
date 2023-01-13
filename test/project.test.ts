@@ -1,7 +1,7 @@
 // tslint:disable-next-line no-implicit-dependencies
 import { assert } from "chai";
 
-import { Finder } from "../src/Finder";
+import { Finder } from "../src/extensions/Finder";
 
 import { useEnvironment } from "./helpers";
 

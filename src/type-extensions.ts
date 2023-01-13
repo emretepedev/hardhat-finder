@@ -1,6 +1,6 @@
 import "hardhat/types/config";
 import "hardhat/types/runtime";
-import type { Finder } from "~/Finder";
+import type { Finder } from "~/extensions/Finder";
 import type { FinderConfig, FinderUserConfig } from "~/types";
 
 declare module "hardhat/types/config" {
