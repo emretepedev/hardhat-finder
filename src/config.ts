@@ -1,7 +1,6 @@
 import deepmerge from "deepmerge";
 import type { ConfigExtender } from "hardhat/types";
 import { cloneDeep } from "lodash";
-
 import {
   DEFAULT_COLORIFY,
   DEFAULT_COMPACT,
@@ -12,7 +11,7 @@ import {
   DEFAULT_OUTPUTS,
   DEFAULT_PRETTIFY,
   DEFAULT_RUN_ON_COMPILE,
-} from "./constants";
+} from "~/constants";
 
 const getDefaultConfig = () => ({
   outputs: DEFAULT_OUTPUTS,

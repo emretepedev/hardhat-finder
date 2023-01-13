@@ -1,7 +1,6 @@
 import type { ActionType, TaskArguments } from "hardhat/types";
-
-import { TASK_FINDER } from "../constants";
-import type { FinderTaskArguments } from "../types";
+import { TASK_FINDER } from "~/constants";
+import type { FinderTaskArguments } from "~/types";
 
 export const finderCompileAction: ActionType<TaskArguments> = async (
   taskArgs: TaskArguments,
