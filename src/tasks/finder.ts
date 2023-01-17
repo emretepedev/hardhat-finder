@@ -1,11 +1,12 @@
+import { task, types } from "hardhat/config";
 import { HardhatPluginError } from "hardhat/plugins";
 import type { ActionType } from "hardhat/types";
 import type { InspectOptions } from "util";
-import { PLUGIN_NAME, SUPPORTED_OUTPUTS } from "~/constants";
+import { PLUGIN_NAME, SUPPORTED_OUTPUTS, TASK_FINDER } from "~/constants";
 import type { ContractInfo, FinderConfig, FinderTaskArguments } from "~/types";
 import { formatOutputName, useConsole, useInspectConsole } from "~/utils";
 
-export const finderAction: ActionType<FinderTaskArguments> = async (
+const finderAction: ActionType<FinderTaskArguments> = async (
   {
     path,
     name,
@@ -140,3 +141,38 @@ const validateTaskArguments = ({ outputs }: FinderTaskArguments) => {
     }
   });
 };
+
+task(TASK_FINDER)
+  .addOptionalParam(
+    "path",
+    "Path to the contract file.",
+    undefined,
+    // TODO: change to types.string for flexibility because of custom root and contracts folder structure. (or get root and contracts file and replace it in code.)
+    types.inputFile
+  )
+  .addOptionalParam("name", "Name of the contract.", undefined, types.string)
+  .addOptionalVariadicPositionalParam(
+    "outputs",
+    `Types of output the contract wants to print. All supported outputs: ${SUPPORTED_OUTPUTS.toString()}`,
+    undefined,
+    types.string
+  )
+  .addOptionalParam(
+    "depth",
+    "The maximum number of nested JSON objects to be printed in outputs.",
+    undefined,
+    types.int
+  )
+  .addOptionalParam(
+    "maxStringLength",
+    "The maximum number of string lengths to be printed in outputs.",
+    undefined,
+    types.int
+  )
+  .addFlag("includeDependencies", "Include contract dependencies in outputs.")
+  .addFlag("colorify", "Colorize the outputs.")
+  .addFlag("prettify", "Beautify the outputs.")
+  .addFlag("compact", "Compact the outputs.")
+  .addFlag("noCompile", "Don't compile before running this task.")
+  .setDescription("Find various outputs of any existing contracts.")
+  .setAction(finderAction);
