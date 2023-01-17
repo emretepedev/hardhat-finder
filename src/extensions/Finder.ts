@@ -4,17 +4,15 @@ import type {
   Artifact,
   BuildInfo,
   HardhatRuntimeEnvironment,
-  LinkReferences,
 } from "hardhat/types";
 import { normalize } from "path";
 import { PLUGIN_NAME } from "~/constants";
 import type {
   CompilerOutputBytecode,
   CompilerOutputContract,
+  CompilerTaskArguments,
   ContractInfo,
-  ImmutableReferences,
   Metadata,
-  SolcVersion,
   SourceDependencies,
 } from "~/types";
 import { useWarningConsole } from "~/utils";
@@ -40,7 +38,7 @@ export class Finder {
     contractPath?: string,
     contractName?: string,
     noCompile: boolean = this.hre.config.finder.noCompile,
-    compilerTaskArgs: any = {}
+    compilerTaskArgs: CompilerTaskArguments = {}
   ) => {
     contractPath ||= this.hre.config.finder?.contract?.path;
     contractName ||= this.hre.config.finder?.contract?.name;
@@ -85,7 +83,7 @@ export class Finder {
     this.contractMetadata = this.getMetadata();
   };
 
-  public getArtifact = (): Artifact => {
+  public getArtifact = () => {
     try {
       const artifact = this.hre.artifacts.readArtifactSync(
         this.contractFullyQualifiedName
@@ -104,7 +102,7 @@ export class Finder {
     }
   };
 
-  public getBuildInfo = async (): Promise<BuildInfo> => {
+  public getBuildInfo = async () => {
     const buildInfo = await this.hre.artifacts.getBuildInfo(
       this.contractFullyQualifiedName
     );
@@ -122,13 +120,13 @@ export class Finder {
     return buildInfo;
   };
 
-  public getAbi = (): any[] => {
+  public getAbi = () => {
     const abi = this.contractArtifact.abi;
 
     return abi;
   };
 
-  public getMetadata = (): Metadata => {
+  public getMetadata = () => {
     const metadataStr: string = (this.contractOutput as any).metadata;
 
     let metadata: Metadata;
@@ -145,40 +143,38 @@ export class Finder {
     return metadata;
   };
 
-  public getBytecode = (): string => {
+  public getBytecode = () => {
     const bytecode = this.contractArtifact.bytecode;
 
     return bytecode;
   };
 
-  public getBytecodeRuntime = (): string => {
+  public getBytecodeRuntime = () => {
     const bytecodeRuntime = this.contractArtifact.deployedBytecode;
 
     return bytecodeRuntime;
   };
 
-  public getLinkReferences = (): LinkReferences => {
+  public getLinkReferences = () => {
     const linkReferences = this.contractArtifact.linkReferences;
 
     return linkReferences;
   };
 
-  public getLinkReferencesRuntime = (): LinkReferences => {
+  public getLinkReferencesRuntime = () => {
     const linkReferencesRuntime = this.contractArtifact.deployedLinkReferences;
 
     return linkReferencesRuntime;
   };
 
-  public getImmutableReferences = (): ImmutableReferences | undefined => {
+  public getImmutableReferences = () => {
     const immutableReferences =
       this.contractOutput.evm.bytecode.immutableReferences;
 
     return immutableReferences;
   };
 
-  public getImmutableReferencesRuntime = ():
-    | ImmutableReferences
-    | undefined => {
+  public getImmutableReferencesRuntime = () => {
     const immutableReferencesRuntime =
       this.contractOutput.evm.deployedBytecode.immutableReferences;
 
@@ -203,7 +199,7 @@ export class Finder {
     return sourceDependencies;
   };
 
-  public getDependenciesInfo = (): ContractInfo[] => {
+  public getDependenciesInfo = () => {
     const paths = Object.keys(this.contractMetadata.sources).filter(
       (source) => source !== this.contractPath
     );
@@ -213,12 +209,11 @@ export class Finder {
       const name = Object.keys(
         this.contractBuildInfo.output.contracts[path]
       )[0];
-      const fullyQualifiedName = `${path}:${name}`;
 
       const sourceDependencyInfo: ContractInfo = {
         path,
         name,
-        fullyQualifiedName,
+        fullyQualifiedName: `${path}:${name}`,
       };
 
       sourceDependenciesInfo.push(sourceDependencyInfo);
@@ -233,8 +228,8 @@ export class Finder {
     return settings;
   };
 
-  public getSolcVersion = (): SolcVersion => {
-    const solcVersion: SolcVersion = {
+  public getSolcVersion = () => {
+    const solcVersion = {
       short: this.contractBuildInfo.solcVersion,
       long: this.contractBuildInfo.solcLongVersion,
     };
@@ -242,7 +237,7 @@ export class Finder {
     return solcVersion;
   };
 
-  public getAst = (): any => {
+  public getAst = () => {
     const ast = this.contractBuildInfo.output.sources[this.contractPath].ast;
 
     return ast;

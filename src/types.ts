@@ -132,17 +132,9 @@ interface SettingsLibraries {
     [libraryName: string]: string;
   };
 }
-export interface SolcVersion {
-  short: string;
-  long: string;
-}
 
 export interface MethodIdentifiers {
   [methodSignature: string]: string;
-}
-
-export interface ImmutableReferences {
-  [key: string]: { start: number; length: number }[];
 }
 
 export interface ContractInfo {
@@ -179,4 +171,8 @@ export interface StorageLayoutTypes {
 
 export interface CompilerOutputBytecode extends BaseCompilerOutputBytecode {
   generatedSources: any;
+}
+
+export interface CompilerTaskArguments {
+  [argument: string]: any;
 }
