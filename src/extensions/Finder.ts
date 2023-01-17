@@ -315,10 +315,15 @@ export class Finder {
     contractPath: string,
     contractName: string
   ) => {
+    const userRootPath = this.hre.userConfig?.paths?.root
+      ? `${normalize(this.hre.userConfig.paths.root)}/`
+      : "";
+
     this._validate(
-      (this.contractPath = contractPath && normalize(contractPath)),
+      (this.contractPath = normalize(contractPath).replace(userRootPath, "")),
       (this.contractName = contractName)
     );
+
     this.contractFullyQualifiedName = this.getFullyQualifiedName();
   };
 

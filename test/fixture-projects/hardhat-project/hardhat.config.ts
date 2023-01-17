@@ -5,6 +5,9 @@ import "~/index";
 const config: HardhatUserConfig = {
   solidity: "0.8.0",
   defaultNetwork: "hardhat",
+  // paths: {
+  //   root: "./src",
+  // },
   finder: {
     contract: {
       path: "contracts/Example.sol",
