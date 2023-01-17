@@ -42,8 +42,17 @@ export class Finder {
     noCompile: boolean = this.hre.config.finder.noCompile,
     compilerTaskArgs: any = {}
   ) => {
-    contractPath ||= this.hre.config.finder.contract?.path;
-    contractName ||= this.hre.config.finder.contract?.name;
+    contractPath ||= this.hre.config.finder?.contract?.path;
+    contractName ||= this.hre.config.finder?.contract?.name;
+
+    if (!contractPath || !contractName) {
+      throw new HardhatPluginError(
+        PLUGIN_NAME,
+        `\nMake sure the Finder.setFor() arguments are correct or 'config.finder.contract' key is set.\n` +
+          `Contract Path: ${contractPath}\n` +
+          `Contract Name: ${contractName}`
+      );
+    }
 
     this._setInitialContractInfo(contractPath, contractName);
 
@@ -307,7 +316,10 @@ export class Finder {
     return sourceMapRuntime;
   };
 
-  private _setInitialContractInfo = (contractPath: any, contractName: any) => {
+  private _setInitialContractInfo = (
+    contractPath: string,
+    contractName: string
+  ) => {
     this._validate(
       (this.contractPath = contractPath && normalize(contractPath)),
       (this.contractName = contractName)
@@ -315,7 +327,7 @@ export class Finder {
     this.contractFullyQualifiedName = this.getFullyQualifiedName();
   };
 
-  private _validate = (contractPath: any, contractName: any) => {
+  private _validate = (contractPath: string, contractName: string) => {
     const contractPathRegexp = new RegExp("\\.sol$");
     if (!contractPathRegexp.test(contractPath)) {
       throw new HardhatPluginError(

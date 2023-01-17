@@ -11,32 +11,20 @@ const compileAction: ActionType<TaskArguments> = async (
 ) => {
   await runSuper(taskArgs);
 
-  if (
-    !taskArgs.noFinder &&
-    config.finder.runOnCompile &&
-    config.finder.contract?.path &&
-    config.finder.contract?.name
-  ) {
+  if (!taskArgs.noFinder && config.finder.runOnCompile) {
     const finderTaskArguments: FinderTaskArguments = {
-      path: config.finder.contract.path,
-      name: config.finder.contract.name,
-      outputs: config.finder.outputs,
       depth: config.finder.depth === Infinity ? undefined : config.finder.depth,
       maxStringLength:
         config.finder.maxStringLength === Infinity
           ? undefined
           : config.finder.maxStringLength,
-      includeDependencies: config.finder.includeDependencies,
-      colorify: config.finder.colorify,
-      prettify: config.finder.prettify,
-      compact: config.finder.compact,
       noCompile: true,
     };
     await run(TASK_FINDER, finderTaskArguments);
   }
 };
 
-task(TASK_COMPILE)
+task<TaskArguments>(TASK_COMPILE)
   .addFlag(
     "noFinder",
     "Don't run Finder after running this task, even if finder.runOnCompile option is true"

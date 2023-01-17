@@ -10,6 +10,7 @@ const config: HardhatUserConfig = {
       path: "contracts/Example.sol",
       name: "Example",
     },
+    runOnCompile: true,
   },
 };
 

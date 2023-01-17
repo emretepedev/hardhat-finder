@@ -142,7 +142,7 @@ const validateTaskArguments = ({ outputs }: FinderTaskArguments) => {
   });
 };
 
-task(TASK_FINDER)
+task<FinderTaskArguments>(TASK_FINDER)
   .addOptionalParam(
     "path",
     "Path to the contract file.",
