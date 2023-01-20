@@ -1,6 +1,7 @@
 import type {
   CompilerOutputBytecode as BaseCompilerOutputBytecode,
   CompilerOutputContract as BaseCompilerOutputContract,
+  SolcConfig as BaseSolcConfig,
 } from "hardhat/types";
 
 export interface Metadata {
@@ -100,6 +101,15 @@ export interface ContractInfo {
 
 export interface CompilerOutputContract extends BaseCompilerOutputContract {
   storageLayout?: StorageLayout;
+  metadata?: string;
+}
+
+export interface SolcConfig extends BaseSolcConfig {
+  outputSelection: {
+    [d: string]: {
+      [t: string]: string[];
+    };
+  };
 }
 
 export interface StorageLayout {

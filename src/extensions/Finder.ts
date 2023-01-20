@@ -13,6 +13,7 @@ import type {
   CompilerTaskArguments,
   ContractInfo,
   Metadata,
+  SolcConfig,
   SourceDependencies,
 } from "~/types";
 import { useWarningConsole } from "~/utils";
@@ -39,7 +40,7 @@ export class Finder {
     contractPath?: string,
     contractName?: string,
     noCompile: boolean = this.hre.config.finder.noCompile,
-    compilerTaskArgs: CompilerTaskArguments = {}
+    compilerTaskArgs: Partial<CompilerTaskArguments> = {}
   ) => {
     contractPath ||= this.hre.config.finder?.contract?.path;
     contractName ||= this.hre.config.finder?.contract?.name;
@@ -47,9 +48,8 @@ export class Finder {
     if (!contractPath || !contractName) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
-        `\nMake sure the Finder.setFor() arguments are correct or 'config.finder.contract' key is set.\n` +
-          `Contract Path: ${contractPath}\n` +
-          `Contract Name: ${contractName}`
+        "Contract path or name is not found!\n" +
+          "Make sure the Finder.setFor() arguments are correctly provided, or 'config.finder.contract' is set."
       );
     }
 
@@ -59,7 +59,9 @@ export class Finder {
       this.compiledOnce = true;
 
       for (const compiler of this.hre.config.solidity.compilers) {
-        compiler.settings.outputSelection["*"]["*"].push("storageLayout");
+        (compiler.settings as SolcConfig).outputSelection["*"]["*"].push(
+          "storageLayout"
+        );
       }
 
       compilerTaskArgs.noFinder = true;
@@ -98,7 +100,7 @@ export class Finder {
           "Make sure the contract path and name are valid.\n" +
           "Make sure the artifacts exist.\n" +
           "Compile with hardhat or re-run this task without --no-compile flag to create new artifacts.",
-        error
+        error as Error
       );
     }
   };
@@ -128,16 +130,16 @@ export class Finder {
   };
 
   public getMetadata = () => {
-    const metadataStr: string = (this.contractOutput as any).metadata;
+    const metadataStr = this.contractOutput.metadata as string;
 
     let metadata: Metadata;
     try {
-      metadata = JSON.parse(metadataStr);
+      metadata = JSON.parse(metadataStr) as Metadata;
     } catch (error: any) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
         "\nInvalid metadata file",
-        error
+        error as Error
       );
     }
 
