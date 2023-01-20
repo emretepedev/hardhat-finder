@@ -17,7 +17,8 @@ import type {
 } from "~/types";
 import { useWarningConsole } from "~/utils";
 
-// TODO: add asm, function-debug, function-debug-runtime
+// TODO: add setByAddress (hardhat --network foo finder ...)
+// TODO: add asm, function-debug, function-debug-runtime, flatten source
 export class Finder {
   private hre: HardhatRuntimeEnvironment;
   private compiledOnce = false;

@@ -1,4 +1,4 @@
-import chalk from "chalk";
+import { yellow } from "chalk";
 import { HardhatPluginError } from "hardhat/plugins";
 import { inspect, type InspectOptions } from "util";
 import { PLUGIN_NAME } from "~/constants";
@@ -58,11 +58,7 @@ export const getFinderProxy = (finder: Finder): Finder => {
 };
 
 export const useWarningConsole = (message: string) => {
-  console.log(chalk.yellow(`Warning in plugin ${PLUGIN_NAME}:\n` + message));
-};
-
-export const useConsole = (message: string) => {
-  console.log(message);
+  console.log(yellow(`Warning in plugin ${PLUGIN_NAME}:\n` + message));
 };
 
 export const useInspectConsole = (message: string, options: InspectOptions) => {

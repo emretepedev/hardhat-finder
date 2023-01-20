@@ -4,7 +4,7 @@ import type { ActionType } from "hardhat/types";
 import type { InspectOptions } from "util";
 import { PLUGIN_NAME, SUPPORTED_OUTPUTS, TASK_FINDER } from "~/constants";
 import type { ContractInfo, FinderConfig, FinderTaskArguments } from "~/types";
-import { formatOutputName, useConsole, useInspectConsole } from "~/utils";
+import { formatOutputName, useInspectConsole } from "~/utils";
 
 const finderAction: ActionType<FinderTaskArguments> = async (
   {
@@ -72,7 +72,7 @@ const finderAction: ActionType<FinderTaskArguments> = async (
   };
 
   for (const contractInfo of contractsInfo) {
-    useConsole(`@@@@@@@ ${contractInfo.fullyQualifiedName} @@@@@@@`);
+    console.log(`@@@@@@@ ${contractInfo.fullyQualifiedName} @@@@@@@`);
     if (
       contractInfo.fullyQualifiedName !== contractsInfo[0].fullyQualifiedName
     ) {
@@ -86,7 +86,7 @@ const finderAction: ActionType<FinderTaskArguments> = async (
         ? await (finder as any)[functionName]()
         : JSON.stringify(await (finder as any)[functionName]());
 
-      useConsole(
+      console.log(
         `======= ${outputName.humanReadableFormat} ======= (${finder.contractFullyQualifiedName})`
       );
       useInspectConsole(content, inspectOptions);
