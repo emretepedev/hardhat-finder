@@ -3,9 +3,9 @@ module.exports = {
 
   language: "en",
 
-  words: ["nomic", "colorify", "keccak", "jscoverage", "esbenp"],
+  words: ["colorify", "keccak"],
 
-  ignoreWords: ["emre", "tepe", "emretepedev"],
+  ignoreWords: ["emre", "tepe", "emretepedev", "nomic", "esbenp", "jscoverage"],
 
   ignorePaths: [".gitignore", ".git", "yarn.lock"],
 
