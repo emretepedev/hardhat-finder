@@ -1,11 +1,6 @@
-import { yellow } from "chalk";
 import { HardhatPluginError } from "hardhat/plugins";
-import { inspect, type InspectOptions } from "util";
 import { PLUGIN_NAME } from "~/constants";
 import type { Finder } from "~/extensions/Finder";
-
-export const uppercaseFirstChar = (str: string) =>
-  str.charAt(0).toUpperCase() + str.slice(1);
 
 export const formatOutputName = (str: string, separator = "-") => {
   const words = str.split(separator);
@@ -22,7 +17,7 @@ export const formatOutputName = (str: string, separator = "-") => {
 
 export const getFinderProxy = (finder: Finder): Finder => {
   const handler = {
-    get(target: any, property: string) {
+    get(target: Finder, property: string) {
       try {
         if (
           property !== "setFor" &&
@@ -35,6 +30,7 @@ export const getFinderProxy = (finder: Finder): Finder => {
         }
 
         // @ts-ignore
+        // eslint-disable-next-line
         return Reflect.get(...arguments);
       } catch (error: any) {
         if (error instanceof HardhatPluginError) {
@@ -48,7 +44,7 @@ export const getFinderProxy = (finder: Finder): Finder => {
             `name: ${error?.name}\n` +
             `message: ${error?.message}\n` +
             `stack: ${error?.stack}`,
-          error
+          error as Error
         );
       }
     },
@@ -57,10 +53,6 @@ export const getFinderProxy = (finder: Finder): Finder => {
   return new Proxy(finder, handler);
 };
 
-export const useWarningConsole = (message: string) => {
-  console.log(yellow(`Warning in plugin ${PLUGIN_NAME}:\n` + message));
-};
-
-export const useInspectConsole = (message: string, options: InspectOptions) => {
-  console.log(inspect(message, options));
+const uppercaseFirstChar = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };

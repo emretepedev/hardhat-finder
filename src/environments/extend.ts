@@ -1,5 +1,5 @@
 import { lazyObject } from "hardhat/plugins";
-import { EnvironmentExtender } from "hardhat/types";
+import type { EnvironmentExtender } from "hardhat/types";
 import { Finder } from "~/extensions/Finder";
 import { getFinderProxy } from "~/utils";
 

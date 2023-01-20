@@ -29,24 +29,28 @@ module.exports = {
       parserOptions: {
         project: ["./tsconfig.json"],
       },
+
+      rules: {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/ban-ts-comment": "off",
+      },
     },
+
     {
       files: ["src/tasks/finder.ts"],
       rules: {
-        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-extra-non-null-assertion": "off",
-        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/restrict-template-expressions": "off",
-        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
       },
     },
+
     {
       files: ["src/extensions/Finder.ts"],
       rules: {
-        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
         "@typescript-eslint/no-unsafe-call": "off",
         "@typescript-eslint/no-unsafe-argument": "off",
@@ -57,28 +61,12 @@ module.exports = {
         "@typescript-eslint/no-extra-non-null-assertion": "off",
       },
     },
+
     {
-      files: ["src/tasks/compile.ts"],
+      files: ["src/utils/helper.ts"],
       rules: {
-        "@typescript-eslint/no-unsafe-member-access": "off",
-      },
-    },
-    {
-      files: ["src/types.ts"],
-      rules: {
-        "@typescript-eslint/no-explicit-any": "off",
-      },
-    },
-    {
-      files: ["src/utils.ts"],
-      rules: {
-        "@typescript-eslint/ban-ts-comment": "off",
         "@typescript-eslint/restrict-template-expressions": "off",
-        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/no-unsafe-argument": "off",
-        "@typescript-eslint/no-unsafe-return": "off",
-        "prefer-rest-params": "off",
       },
     },
   ],

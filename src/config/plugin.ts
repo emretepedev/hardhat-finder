@@ -1,6 +1,3 @@
-import deepmerge from "deepmerge";
-import type { ConfigExtender } from "hardhat/types";
-import { cloneDeep } from "lodash";
 import {
   DEFAULT_COLORIFY,
   DEFAULT_COMPACT,
@@ -12,8 +9,9 @@ import {
   DEFAULT_PRETTIFY,
   DEFAULT_RUN_ON_COMPILE,
 } from "~/constants";
+import type { FinderConfig } from "~/types";
 
-const getDefaultConfig = () => ({
+export const defaultFinderConfig: FinderConfig = {
   outputs: DEFAULT_OUTPUTS,
   depth: DEFAULT_DEPTH,
   maxStringLength: DEFAULT_MAX_STRING_LENGTH,
@@ -23,14 +21,4 @@ const getDefaultConfig = () => ({
   compact: DEFAULT_COMPACT,
   noCompile: DEFAULT_NO_COMPILE,
   runOnCompile: DEFAULT_RUN_ON_COMPILE,
-});
-
-export const finderConfigExtender: ConfigExtender = (config, userConfig) => {
-  const defaultConfig = getDefaultConfig();
-  if (userConfig.finder !== undefined) {
-    const customConfig = cloneDeep(userConfig.finder);
-    config.finder = deepmerge(defaultConfig, customConfig);
-  } else {
-    config.finder = defaultConfig;
-  }
 };

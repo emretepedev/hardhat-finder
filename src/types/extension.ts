@@ -3,51 +3,6 @@ import type {
   CompilerOutputContract as BaseCompilerOutputContract,
 } from "hardhat/types";
 
-export interface FinderConfig {
-  contract?: {
-    path: string;
-    name: string;
-  };
-  outputs: string[];
-  depth: number;
-  maxStringLength: number;
-  includeDependencies: boolean;
-  colorify: boolean;
-  prettify: boolean;
-  compact: boolean;
-  noCompile: boolean;
-  runOnCompile: boolean;
-}
-
-export interface FinderUserConfig {
-  contract?: {
-    path: string;
-    name: string;
-  };
-  outputs?: string[];
-  depth?: number;
-  maxStringLength?: number;
-  includeDependencies?: boolean;
-  colorify?: boolean;
-  prettify?: boolean;
-  compact?: boolean;
-  noCompile?: boolean;
-  runOnCompile?: boolean;
-}
-
-export interface FinderTaskArguments {
-  path?: string;
-  name?: string;
-  outputs?: string[];
-  depth?: number;
-  maxStringLength?: number;
-  includeDependencies?: boolean;
-  colorify?: boolean;
-  prettify?: boolean;
-  compact?: boolean;
-  noCompile?: boolean;
-}
-
 export interface Metadata {
   compiler: MetadataCompiler;
   language: string;
@@ -171,8 +126,4 @@ export interface StorageLayoutTypes {
 
 export interface CompilerOutputBytecode extends BaseCompilerOutputBytecode {
   generatedSources: any;
-}
-
-export interface CompilerTaskArguments {
-  [argument: string]: any;
 }

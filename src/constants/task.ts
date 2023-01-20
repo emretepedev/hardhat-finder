@@ -1,5 +1,3 @@
-export const PLUGIN_NAME = "hardhat-finder";
-export const TASK_FINDER = "finder";
 // TODO: reorder the outputs
 export const SUPPORTED_OUTPUTS = [
   "artifact",

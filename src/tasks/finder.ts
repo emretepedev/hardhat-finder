@@ -82,9 +82,9 @@ const finderAction: ActionType<FinderTaskArguments> = async (
     for (const output of outputs) {
       const outputName = formatOutputName(output);
       const functionName = `get${outputName.pascalCaseFormat}`;
-      const content = prettify
-        ? await (finder as any)[functionName]()
-        : JSON.stringify(await (finder as any)[functionName]());
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      const result = await (finder as any)[functionName]();
+      const content = prettify ? result : JSON.stringify(result);
 
       console.log(
         `======= ${outputName.humanReadableFormat} ======= (${finder.contractFullyQualifiedName})`

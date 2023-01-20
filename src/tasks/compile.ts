@@ -2,10 +2,10 @@ import { TASK_COMPILE } from "hardhat/builtin-tasks/task-names";
 import { task } from "hardhat/config";
 import type { ActionType, TaskArguments } from "hardhat/types";
 import { TASK_FINDER } from "~/constants";
-import type { FinderTaskArguments } from "~/types";
+import type { CompilerTaskArguments, FinderTaskArguments } from "~/types";
 
 const compileAction: ActionType<TaskArguments> = async (
-  taskArgs: TaskArguments,
+  taskArgs: CompilerTaskArguments,
   { run, config },
   runSuper
 ) => {
@@ -24,7 +24,7 @@ const compileAction: ActionType<TaskArguments> = async (
   }
 };
 
-task<TaskArguments>(TASK_COMPILE)
+task<CompilerTaskArguments>(TASK_COMPILE)
   .addFlag(
     "noFinder",
     "Don't run Finder after running this task, even if finder.runOnCompile option is true"
