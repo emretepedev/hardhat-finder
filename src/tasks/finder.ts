@@ -3,7 +3,7 @@ import { HardhatPluginError } from "hardhat/plugins";
 import type { ActionType } from "hardhat/types";
 import type { InspectOptions } from "util";
 import { PLUGIN_NAME, SUPPORTED_OUTPUTS, TASK_FINDER } from "~/constants";
-import type { ContractInfo, FinderConfig, FinderTaskArguments } from "~/types";
+import type { ContractInfo, FinderTaskArguments } from "~/types";
 import { formatOutputName, useInspectConsole } from "~/utils";
 
 const finderAction: ActionType<FinderTaskArguments> = async (
@@ -32,30 +32,21 @@ const finderAction: ActionType<FinderTaskArguments> = async (
     prettify,
     compact,
     noCompile,
-  } = prepareTaskArguments(config.finder, {
-    path,
-    name,
-    outputs,
-    depth,
-    maxStringLength,
-    includeDependencies,
-    colorify,
-    prettify,
-    compact,
-    noCompile,
-  }));
+  } = prepareTaskArguments());
 
-  validateTaskArguments({
-    outputs,
-  });
+  validateTaskArguments();
 
   await finder.setFor(path, name, noCompile);
   const fullyQualifiedName = finder.getFullyQualifiedName();
-  const contractsInfo: Partial<ContractInfo>[] = [
+  const contractsInfo: ContractInfo[] = [
     {
       path,
       name,
       fullyQualifiedName,
+    } as {
+      path: string;
+      name: string;
+      fullyQualifiedName: string;
     },
   ];
 
@@ -82,8 +73,8 @@ const finderAction: ActionType<FinderTaskArguments> = async (
     for (const output of outputs) {
       const outputName = formatOutputName(output);
       const functionName = `get${outputName.pascalCaseFormat}`;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      const result = await (finder as any)[functionName]();
+      // eslint-disable-next-line
+      const result = (await (finder as any)[functionName]()) as unknown;
       const content = prettify ? result : JSON.stringify(result);
 
       console.log(
@@ -92,54 +83,38 @@ const finderAction: ActionType<FinderTaskArguments> = async (
       useInspectConsole(content, inspectOptions);
     }
   }
-};
 
-const prepareTaskArguments = (
-  finderConfig: FinderConfig,
-  {
-    path,
-    name,
-    outputs,
-    maxStringLength,
-    depth,
-    includeDependencies,
-    colorify,
-    prettify,
-    compact,
-    noCompile,
-  }: FinderTaskArguments
-) => {
-  return {
-    path: path || finderConfig.contract?.path,
-    name: name || finderConfig.contract?.name,
-    outputs:
-      outputs ||
-      (finderConfig.outputs.length > 0 && finderConfig.outputs) ||
-      SUPPORTED_OUTPUTS,
-    depth: depth !== undefined ? depth : finderConfig.depth,
-    maxStringLength:
-      maxStringLength !== undefined
-        ? maxStringLength
-        : finderConfig.maxStringLength,
-    includeDependencies:
-      includeDependencies || finderConfig.includeDependencies,
-    colorify: colorify || finderConfig.colorify,
-    prettify: prettify || finderConfig.prettify,
-    compact: compact || finderConfig.compact,
-    noCompile: noCompile || finderConfig.noCompile,
-  };
-};
+  function prepareTaskArguments() {
+    return {
+      path: path || config.finder.contract?.path,
+      name: name || config.finder.contract?.name,
+      outputs:
+        outputs ||
+        (config.finder.outputs.length > 0 && config.finder.outputs) ||
+        SUPPORTED_OUTPUTS,
+      depth: depth ?? config.finder.depth,
+      maxStringLength: maxStringLength ?? config.finder.maxStringLength,
+      includeDependencies:
+        includeDependencies || config.finder.includeDependencies,
+      colorify: colorify || config.finder.colorify,
+      prettify: prettify || config.finder.prettify,
+      compact: compact || config.finder.compact,
+      noCompile: noCompile || config.finder.noCompile,
+    };
+  }
 
-const validateTaskArguments = ({ outputs }: FinderTaskArguments) => {
-  outputs!!.forEach((output) => {
-    if (!SUPPORTED_OUTPUTS.includes(output)) {
-      throw new HardhatPluginError(
-        PLUGIN_NAME,
-        `\nUnsupported Output: '${output}'.\n` +
-          `All supported contract outputs: ${SUPPORTED_OUTPUTS.toString()}`
-      );
-    }
-  });
+  function validateTaskArguments() {
+    // eslint-disable-next-line
+    outputs!!.forEach((output) => {
+      if (!SUPPORTED_OUTPUTS.includes(output)) {
+        throw new HardhatPluginError(
+          PLUGIN_NAME,
+          `\nUnsupported Output: '${output}'.\n` +
+            `All supported contract outputs: ${SUPPORTED_OUTPUTS.toString()}`
+        );
+      }
+    });
+  }
 };
 
 task<FinderTaskArguments>(TASK_FINDER)

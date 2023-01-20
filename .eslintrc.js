@@ -37,18 +37,6 @@ module.exports = {
     },
 
     {
-      files: ["src/tasks/finder.ts"],
-      rules: {
-        "@typescript-eslint/no-extra-non-null-assertion": "off",
-        "@typescript-eslint/no-non-null-assertion": "off",
-        "@typescript-eslint/no-unsafe-assignment": "off",
-        "@typescript-eslint/restrict-template-expressions": "off",
-        "@typescript-eslint/no-unsafe-member-access": "off",
-        "@typescript-eslint/no-unsafe-argument": "off",
-      },
-    },
-
-    {
       files: ["src/extensions/Finder.ts"],
       rules: {
         "@typescript-eslint/no-unsafe-member-access": "off",
