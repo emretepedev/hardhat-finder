@@ -116,22 +116,16 @@ module.exports = {
 
 There are no additional steps you need to take for this plugin to work.
 
-Install it and access ethers through the Hardhat Runtime Environment anywhere you need it (tasks, scripts, tests, etc).
+Install it and access `finder` through the Hardhat Runtime Environment anywhere you need it (tasks, scripts, tests, etc).
 
 ```ts
 import { finder } from "hardhat";
 
 async function main() {
-  // Set for userConfig.finder.contract.path:userConfig.finder.contract.name (e.g. contracts/Example.sol:Example)
-  await finder.setFor();
-  console.log(finder.getAst());
-  console.log(finder.getOpcodes());
-  console.log(finder.getOpcodesRuntime());
-
   const contractPath = "contracts/ExampleLibrary.sol";
   const contractName = "ExampleLibrary";
-  // Set for contracts/ExampleLibrary.sol:ExampleLibrary
   await finder.setFor(contractPath, contractName);
+
   console.log(finder.getUserDocument());
   console.log(finder.getDeveloperDocument());
 }
