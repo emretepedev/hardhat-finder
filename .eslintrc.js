@@ -47,7 +47,6 @@ module.exports = {
     {
       files: ["src/utils/helper.ts"],
       rules: {
-        "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-unsafe-member-access": "off",
       },
     },
