@@ -22,10 +22,10 @@ describe("Integration tests", function () {
     });
 
     it("The finder field should get fully qualified name", async function () {
-      await this.hre.finder.setFor(
-        "contracts/ExampleLibrary.sol",
-        "ExampleLibrary"
-      );
+      await this.hre.finder.setFor({
+        contractPath: "contracts/ExampleLibrary.sol",
+        contractName: "ExampleLibrary",
+      });
       assert.equal(
         this.hre.finder.getFullyQualifiedName(),
         "contracts/ExampleLibrary.sol:ExampleLibrary"
