@@ -1,6 +1,6 @@
-import { HardhatPluginError } from "hardhat/plugins";
-import { PLUGIN_NAME } from "~/constants";
-import type { Finder } from "~/extensions/Finder";
+import deepmerge from "deepmerge";
+import { cloneDeep } from "lodash";
+import { MergeOptions } from "~/types";
 
 export const formatOutputName = (str: string, separator = "-") => {
   const words = str.split(separator);
@@ -15,42 +15,27 @@ export const formatOutputName = (str: string, separator = "-") => {
   };
 };
 
-export const getFinderProxy = (finder: Finder): Finder => {
-  const handler = {
-    get(target: Finder, property: string) {
-      try {
-        if (
-          property !== "setFor" &&
-          (!target.contractPath || !target.contractName)
-        ) {
-          throw new HardhatPluginError(
-            PLUGIN_NAME,
-            `\nYou have to set 'config.finder.contract' option or run 'Finder.setFor()' function before using ${property} function.`
-          );
-        }
+export const merge = <T>(
+  x: Partial<T>,
+  y?: Partial<T>,
+  overrides: Partial<T> = {},
+  options?: MergeOptions
+) => {
+  let result: Partial<T>;
+  if (y !== undefined) {
+    if (options?.clone) {
+      const clone = cloneDeep(y);
+      result = deepmerge(x, clone);
+    } else {
+      result = deepmerge(x, y);
+    }
+  } else {
+    result = x;
+  }
 
-        // @ts-ignore
-        // eslint-disable-next-line
-        return Reflect.get(...arguments);
-      } catch (error: any) {
-        if (error instanceof HardhatPluginError) {
-          throw error;
-        }
+  result = deepmerge<T>(result, overrides);
 
-        throw new HardhatPluginError(
-          PLUGIN_NAME,
-          `\nSomething went wrong with '${property}' in ${target.constructor.name} class\n` +
-            "Error:\n" +
-            `name: ${error?.name}\n` +
-            `message: ${error?.message}\n` +
-            `stack: ${error?.stack}`,
-          error as Error
-        );
-      }
-    },
-  };
-
-  return new Proxy(finder, handler);
+  return result as T;
 };
 
 const uppercaseFirstChar = (str: string) => {
