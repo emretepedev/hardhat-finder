@@ -124,7 +124,10 @@ import { finder } from "hardhat";
 async function main() {
   const contractPath = "contracts/ExampleLibrary.sol";
   const contractName = "ExampleLibrary";
-  await finder.setFor(contractPath, contractName);
+  await finder.setFor({
+    contractPath,
+    contractName,
+  });
 
   console.log(finder.getUserDocument());
   console.log(finder.getDeveloperDocument());
