@@ -3,6 +3,24 @@ import type {
   CompilerOutputContract as BaseCompilerOutputContract,
   SolcConfig as BaseSolcConfig,
 } from "hardhat/types";
+import type { CompilerTaskUserArguments } from "~/types";
+
+export interface FinderExtensionArguments {
+  contractPath?: string;
+  contractName?: string;
+  compilerTaskArgs?: CompilerTaskUserArguments;
+  options?: FinderExtensionUserOptions;
+}
+
+export interface FinderExtensionUserOptions {
+  noCompile?: boolean;
+  hideWarnings?: boolean;
+}
+
+export interface FinderExtensionOptions {
+  noCompile: boolean;
+  hideWarnings: boolean;
+}
 
 export interface Metadata {
   compiler: MetadataCompiler;
