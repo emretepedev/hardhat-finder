@@ -6,17 +6,24 @@ import type {
   HardhatRuntimeEnvironment,
 } from "hardhat/types";
 import { normalize } from "path";
+import {
+  defaultExtensionCompilerTaskArgs,
+  defaultExtensionOptions,
+} from "~/config";
 import { PLUGIN_NAME } from "~/constants";
 import type {
   CompilerOutputBytecode,
   CompilerOutputContract,
   CompilerTaskArguments,
+  CompilerTaskUserArguments,
   ContractInfo,
+  FinderExtensionArguments,
+  FinderExtensionOptions,
   Metadata,
   SolcConfig,
   SourceDependencies,
 } from "~/types";
-import { useWarningConsole } from "~/utils";
+import { merge, useErrorMessage, useWarningConsole } from "~/utils";
 
 // TODO: add setByAddress (hardhat --network foo finder ...)
 // TODO: add asm, function-debug, function-debug-runtime, flatten source
@@ -36,47 +43,54 @@ export class Finder {
     this.hre = hre;
   }
 
-  public setFor = async (
-    contractPath?: string,
-    contractName?: string,
-    noCompile: boolean = this.hre.config.finder.noCompile,
-    compilerTaskArgs: Partial<CompilerTaskArguments> = {}
-  ) => {
-    contractPath ||= this.hre.config.finder?.contract?.path;
-    contractName ||= this.hre.config.finder?.contract?.name;
+  public setFor = async ({
+    contractPath,
+    contractName,
+    compilerTaskArgs,
+    options,
+  }: FinderExtensionArguments = {}) => {
+    contractPath ??= this.hre.userConfig?.finder?.contract?.path;
+    contractName ??= this.hre.userConfig?.finder?.contract?.name;
 
     if (!contractPath || !contractName) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
-        "Contract path or name is not found!\n" +
-          "Make sure the Finder.setFor() arguments are correctly provided, or 'config.finder.contract' is set."
+        useErrorMessage(
+          "Contract path or name not found!\n" +
+            "Make sure the Finder.setFor() arguments are correctly provided, or 'finder.contract' is set in your Hardhat config."
+        )
       );
     }
 
-    this._setInitialContractInfo(contractPath, contractName);
+    const { noCompile, hideWarnings } = merge<FinderExtensionOptions>(
+      defaultExtensionOptions,
+      options
+    );
+
+    compilerTaskArgs = merge<CompilerTaskArguments>(
+      defaultExtensionCompilerTaskArgs,
+      compilerTaskArgs,
+      { noFinder: defaultExtensionCompilerTaskArgs.noFinder }
+    );
 
     if (!noCompile && !this.compiledOnce) {
       this.compiledOnce = true;
 
-      for (const compiler of this.hre.config.solidity.compilers) {
-        (compiler.settings as SolcConfig).outputSelection["*"]["*"].push(
-          "storageLayout"
-        );
-      }
-
-      compilerTaskArgs.noFinder = true;
-      await this.hre.run(TASK_COMPILE, compilerTaskArgs);
+      await this.compile(compilerTaskArgs);
     } else {
       if (!this.compiledOnce && !this.warnedOnce) {
         this.warnedOnce = true;
 
-        useWarningConsole(
-          "These arguments or functions do NOT work as expected when 'noCompile' option is true:\n" +
-            "- storage-layout / getStorageLayout()"
-        );
+        if (!hideWarnings) {
+          useWarningConsole(
+            "These arguments or functions do NOT work as expected when 'noCompile' option is true:\n" +
+              "- storage-layout / getStorageLayout()"
+          );
+        }
       }
     }
 
+    this.setInitialContractInfo(contractPath, contractName);
     this.contractArtifact = this.getArtifact();
     this.contractBuildInfo = await this.getBuildInfo();
     this.contractOutput =
@@ -96,10 +110,12 @@ export class Finder {
     } catch (error: any) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
-        "\nThere is no Artifact for target contract.\n" +
-          "Make sure the contract path and name are valid.\n" +
-          "Make sure the artifacts exist.\n" +
-          "Compile with hardhat or re-run this task without --no-compile flag to create new artifacts.",
+        useErrorMessage(
+          "There is no Artifact for target contract.\n" +
+            "Make sure the contract path and name are valid.\n" +
+            "Make sure the artifacts exist.\n" +
+            "Compile with hardhat or re-run this task without --no-compile flag to create new artifacts."
+        ),
         error as Error
       );
     }
@@ -113,10 +129,12 @@ export class Finder {
     if (!buildInfo) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
-        "\nThere is no Build Info for target contract.\n" +
-          "Make sure the contract path and name are valid.\n" +
-          "Make sure the artifacts exist.\n" +
-          "Compile with hardhat or re-run this task without --no-compile flag to create new artifacts."
+        useErrorMessage(
+          "There is no Build Info for target contract.\n" +
+            "Make sure the contract path and name are valid.\n" +
+            "Make sure the artifacts exist.\n" +
+            "Compile with hardhat or re-run this task without --no-compile flag to create new artifacts."
+        )
       );
     }
 
@@ -138,7 +156,7 @@ export class Finder {
     } catch (error: any) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
-        "\nInvalid metadata file",
+        useErrorMessage("Invalid metadata file."),
         error as Error
       );
     }
@@ -314,7 +332,7 @@ export class Finder {
     return sourceMapRuntime;
   };
 
-  private _setInitialContractInfo = (
+  private setInitialContractInfo = (
     contractPath: string,
     contractName: string
   ) => {
@@ -322,7 +340,7 @@ export class Finder {
       ? `${normalize(this.hre.userConfig.paths.root)}/`
       : "";
 
-    this._validate(
+    this.validate(
       (this.contractPath = normalize(contractPath).replace(userRootPath, "")),
       (this.contractName = contractName)
     );
@@ -330,14 +348,16 @@ export class Finder {
     this.contractFullyQualifiedName = this.getFullyQualifiedName();
   };
 
-  private _validate = (contractPath: string, contractName: string) => {
+  private validate = (contractPath: string, contractName: string) => {
     const contractPathRegexp = new RegExp("\\.sol$");
     if (!contractPathRegexp.test(contractPath)) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
-        `\nInvalid Path File: '${contractPath}'.\n` +
-          "Make sure the contract path points to a '.sol' file.\n" +
-          "Example: contracts/Foo.sol"
+        useErrorMessage(
+          `Invalid Path File: '${contractPath}'.\n` +
+            "Make sure the contract path points to a '.sol' file.\n" +
+            "Example: contracts/Foo.sol"
+        )
       );
     }
 
@@ -345,8 +365,21 @@ export class Finder {
     if (!contractNameRegexp.test(contractName)) {
       throw new HardhatPluginError(
         PLUGIN_NAME,
-        `\nInvalid contract name: '${contractName}'.`
+        useErrorMessage(`Invalid contract name: '${contractName}'.`)
       );
     }
+  };
+
+  private compile = async (taskArgs: CompilerTaskUserArguments) => {
+    for (const compiler of this.hre.config.solidity.compilers) {
+      // TODO: check for more outputs https://docs.soliditylang.org/en/v0.8.17/using-the-compiler.html
+      // To select all outputs the compiler can possibly generate, use
+      // "outputSelection: { "*": { "*": [ "*" ], "": [ "*" ] } }"
+      (compiler.settings as SolcConfig).outputSelection["*"]["*"].push(
+        "storageLayout"
+      );
+    }
+
+    await this.hre.run(TASK_COMPILE, taskArgs);
   };
 }

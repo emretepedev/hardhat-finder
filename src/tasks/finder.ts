@@ -4,7 +4,13 @@ import type { ActionType } from "hardhat/types";
 import type { InspectOptions } from "util";
 import { PLUGIN_NAME, SUPPORTED_OUTPUTS, TASK_FINDER } from "~/constants";
 import type { ContractInfo, FinderTaskArguments } from "~/types";
-import { formatOutputName, useInspectConsole } from "~/utils";
+import {
+  formatOutputName,
+  useErrorMessage,
+  useHeaderConsole,
+  useInspectConsole,
+  useSubheaderConsole,
+} from "~/utils";
 
 const finderAction: ActionType<FinderTaskArguments> = async (
   {
@@ -36,7 +42,14 @@ const finderAction: ActionType<FinderTaskArguments> = async (
 
   validateTaskArguments();
 
-  await finder.setFor(path, name, noCompile);
+  await finder.setFor({
+    contractPath: path,
+    contractName: name,
+    options: {
+      noCompile,
+    },
+  });
+
   const fullyQualifiedName = finder.getFullyQualifiedName();
   const contractsInfo: ContractInfo[] = [
     {
@@ -63,11 +76,12 @@ const finderAction: ActionType<FinderTaskArguments> = async (
   };
 
   for (const contractInfo of contractsInfo) {
-    console.log(`@@@@@@@ ${contractInfo.fullyQualifiedName} @@@@@@@`);
-    if (
-      contractInfo.fullyQualifiedName !== contractsInfo[0].fullyQualifiedName
-    ) {
-      await finder.setFor(contractInfo.path, contractInfo.name, noCompile);
+    useHeaderConsole(`@@@@@@@ ${contractInfo.fullyQualifiedName} @@@@@@@`);
+    if (contractInfo.fullyQualifiedName !== fullyQualifiedName) {
+      await finder.setFor({
+        contractPath: contractInfo.path,
+        contractName: contractInfo.name,
+      });
     }
 
     for (const output of outputs) {
@@ -77,8 +91,8 @@ const finderAction: ActionType<FinderTaskArguments> = async (
       const result = (await (finder as any)[functionName]()) as unknown;
       const content = prettify ? result : JSON.stringify(result);
 
-      console.log(
-        `======= ${outputName.humanReadableFormat} ======= (${finder.contractFullyQualifiedName})`
+      useSubheaderConsole(
+        `======= ${outputName.humanReadableFormat} ======= (${contractInfo.fullyQualifiedName})`
       );
       useInspectConsole(content, inspectOptions);
     }
@@ -109,8 +123,10 @@ const finderAction: ActionType<FinderTaskArguments> = async (
       if (!SUPPORTED_OUTPUTS.includes(output)) {
         throw new HardhatPluginError(
           PLUGIN_NAME,
-          `\nUnsupported Output: '${output}'.\n` +
-            `All supported contract outputs: ${SUPPORTED_OUTPUTS.toString()}`
+          useErrorMessage(
+            `Unsupported Output: '${output}'.\n` +
+              `All supported contract outputs: ${SUPPORTED_OUTPUTS.toString()}`
+          )
         );
       }
     });
