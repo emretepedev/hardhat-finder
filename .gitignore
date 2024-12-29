@@ -64,3 +64,4 @@ typings/
 
 test/**/artifacts
 test/**/cache
+test/**/finder-outputs

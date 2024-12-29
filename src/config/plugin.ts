@@ -5,9 +5,11 @@ import {
   DEFAULT_INCLUDE_DEPENDENCIES,
   DEFAULT_MAX_STRING_LENGTH,
   DEFAULT_NO_COMPILE,
+  DEFAULT_OUTPUT_DIR,
   DEFAULT_OUTPUTS,
   DEFAULT_PRETTIFY,
   DEFAULT_RUN_ON_COMPILE,
+  DEFAULT_WRITE_TO_FILE,
 } from "~/constants";
 import type { FinderConfig } from "~/types";
 
@@ -21,4 +23,6 @@ export const defaultFinderConfig: FinderConfig = {
   compact: DEFAULT_COMPACT,
   noCompile: DEFAULT_NO_COMPILE,
   runOnCompile: DEFAULT_RUN_ON_COMPILE,
+  writeToFile: DEFAULT_WRITE_TO_FILE,
+  outputDir: DEFAULT_OUTPUT_DIR,
 };

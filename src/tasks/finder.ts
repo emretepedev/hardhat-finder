@@ -1,6 +1,8 @@
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { task, types } from "hardhat/config";
 import { HardhatPluginError } from "hardhat/plugins";
 import type { ActionType } from "hardhat/types";
+import { dirname } from "path";
 import type { InspectOptions } from "util";
 import { PLUGIN_NAME, SUPPORTED_OUTPUTS, TASK_FINDER } from "~/constants";
 import type { ContractInfo, FinderTaskArguments } from "~/types";
@@ -24,6 +26,8 @@ const finderAction: ActionType<FinderTaskArguments> = async (
     prettify,
     compact,
     noCompile,
+    writeToFile,
+    outputDir,
   },
   { config, finder }
 ) => {
@@ -38,6 +42,8 @@ const finderAction: ActionType<FinderTaskArguments> = async (
     prettify,
     compact,
     noCompile,
+    writeToFile,
+    outputDir,
   } = prepareTaskArguments());
 
   validateTaskArguments();
@@ -95,6 +101,15 @@ const finderAction: ActionType<FinderTaskArguments> = async (
         `======= ${outputName.humanReadableFormat} ======= (${contractInfo.fullyQualifiedName})`
       );
       useInspectConsole(content, inspectOptions);
+
+      if (writeToFile) {
+        const filePath = `${outputDir}/${contractInfo.fullyQualifiedName}/${output}`;
+        const dirPath = dirname(filePath);
+        if (!existsSync(dirPath)) {
+          mkdirSync(dirPath, { recursive: true });
+        }
+        writeFileSync(filePath, content);
+      }
     }
   }
 
@@ -114,6 +129,8 @@ const finderAction: ActionType<FinderTaskArguments> = async (
       prettify: prettify || config.finder.prettify,
       compact: compact || config.finder.compact,
       noCompile: noCompile || config.finder.noCompile,
+      writeToFile: writeToFile || config.finder.writeToFile,
+      outputDir: outputDir || config.finder.outputDir,
     };
   }
 
@@ -164,5 +181,12 @@ task<FinderTaskArguments>(TASK_FINDER)
   .addFlag("prettify", "Beautify the outputs.")
   .addFlag("compact", "Compact the outputs.")
   .addFlag("noCompile", "Don't compile before running this task.")
+  .addFlag("writeToFile", "Write the outputs to a file.")
+  .addOptionalParam(
+    "outputDir",
+    "Directory to save the outputs.",
+    undefined,
+    types.string
+  )
   .setDescription("Find various outputs of any existing contracts.")
   .setAction(finderAction);

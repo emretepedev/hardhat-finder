@@ -37,3 +37,5 @@ export const DEFAULT_PRETTIFY = false;
 export const DEFAULT_COMPACT = false;
 export const DEFAULT_NO_COMPILE = false;
 export const DEFAULT_RUN_ON_COMPILE = false;
+export const DEFAULT_WRITE_TO_FILE = false;
+export const DEFAULT_OUTPUT_DIR = "finder-outputs";

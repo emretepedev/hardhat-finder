@@ -9,6 +9,8 @@ export interface FinderTaskArguments {
   prettify?: boolean;
   compact?: boolean;
   noCompile?: boolean;
+  writeToFile?: boolean;
+  outputDir?: string;
 }
 
 export interface CompilerTaskArguments {

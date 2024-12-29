@@ -12,6 +12,8 @@ export interface FinderConfig {
   compact: boolean;
   noCompile: boolean;
   runOnCompile: boolean;
+  writeToFile: boolean;
+  outputDir: string;
 }
 
 export interface FinderUserConfig {
@@ -28,4 +30,6 @@ export interface FinderUserConfig {
   compact?: boolean;
   noCompile?: boolean;
   runOnCompile?: boolean;
+  writeToFile: boolean;
+  outputDir: string;
 }
