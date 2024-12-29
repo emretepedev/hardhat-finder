@@ -16,8 +16,8 @@ import {
 
 const finderAction: ActionType<FinderTaskArguments> = async (
   {
-    path,
-    name,
+    contractPath,
+    contractName,
     outputs,
     depth,
     maxStringLength,
@@ -32,8 +32,8 @@ const finderAction: ActionType<FinderTaskArguments> = async (
   { config, finder }
 ) => {
   ({
-    path,
-    name,
+    contractPath,
+    contractName,
     outputs,
     depth,
     maxStringLength,
@@ -48,9 +48,19 @@ const finderAction: ActionType<FinderTaskArguments> = async (
 
   validateTaskArguments();
 
+  if (!contractPath || !contractName) {
+    throw new HardhatPluginError(
+      PLUGIN_NAME,
+      useErrorMessage(
+        "Contract path or name is required to find the contract outputs.\n" +
+          "You can set 'config.finder.contract' option or provide 'contract-path' and 'contract-name' arguments."
+      )
+    );
+  }
+
   await finder.setFor({
-    contractPath: path,
-    contractName: name,
+    contractPath,
+    contractName,
     options: {
       noCompile,
     },
@@ -59,13 +69,9 @@ const finderAction: ActionType<FinderTaskArguments> = async (
   const fullyQualifiedName = finder.getFullyQualifiedName();
   const contractsInfo: ContractInfo[] = [
     {
-      path,
-      name,
+      path: contractPath,
+      name: contractName,
       fullyQualifiedName,
-    } as {
-      path: string;
-      name: string;
-      fullyQualifiedName: string;
     },
   ];
 
@@ -94,7 +100,7 @@ const finderAction: ActionType<FinderTaskArguments> = async (
       const outputName = formatOutputName(output);
       const functionName = `get${outputName.pascalCaseFormat}`;
       // eslint-disable-next-line
-      const result = (await (finder as any)[functionName]()) as unknown;
+      const result: string = await (finder as any)[functionName]();
       const content = prettify ? result : JSON.stringify(result);
 
       useSubheaderConsole(
@@ -115,8 +121,8 @@ const finderAction: ActionType<FinderTaskArguments> = async (
 
   function prepareTaskArguments() {
     return {
-      path: path || config.finder.contract?.path,
-      name: name || config.finder.contract?.name,
+      contractPath: contractPath || config.finder.contract?.path,
+      contractName: contractName || config.finder.contract?.name,
       outputs:
         outputs ||
         (config.finder.outputs.length > 0 && config.finder.outputs) ||
@@ -141,7 +147,7 @@ const finderAction: ActionType<FinderTaskArguments> = async (
         throw new HardhatPluginError(
           PLUGIN_NAME,
           useErrorMessage(
-            `Unsupported Output: '${output}'.\n` +
+            `Unsupported output: '${output}'.\n` +
               `All supported contract outputs: ${SUPPORTED_OUTPUTS.toString()}`
           )
         );
@@ -152,12 +158,17 @@ const finderAction: ActionType<FinderTaskArguments> = async (
 
 task<FinderTaskArguments>(TASK_FINDER)
   .addOptionalParam(
-    "path",
+    "contractPath",
     "Path to the contract file.",
     undefined,
     types.inputFile
   )
-  .addOptionalParam("name", "Name of the contract.", undefined, types.string)
+  .addOptionalParam(
+    "contractName",
+    "Name of the contract.",
+    undefined,
+    types.string
+  )
   .addOptionalVariadicPositionalParam(
     "outputs",
     `Types of output the contract wants to print. All supported outputs: ${SUPPORTED_OUTPUTS.toString()}`,

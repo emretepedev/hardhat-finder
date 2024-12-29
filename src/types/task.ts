@@ -1,6 +1,6 @@
 export interface FinderTaskArguments {
-  path?: string;
-  name?: string;
+  contractPath?: string;
+  contractName?: string;
   outputs?: string[];
   depth?: number;
   maxStringLength?: number;

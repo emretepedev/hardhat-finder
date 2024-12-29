@@ -39,8 +39,8 @@ import "hardhat-finder";
 This plugin adds the `finder` task to Hardhat:
 
 ```
-Usage: hardhat [GLOBAL OPTIONS] finder [--colorify] [--compact] [--name <STRING>] [--path <INPUTFILE>] [--depth <INT>] [--include-dependencies] [--max-string-length <INT>] [--no-compile] [--output-dir <STRING>] [--prettify] [--write-to-file] [...outputs]
-$ hardhat finder --prettify --colorify --path contracts/Example.sol --name Example abi bytecode
+Usage: hardhat [GLOBAL OPTIONS] finder [--colorify] [--compact] [--contract-name <STRING>] [--contract-path <INPUTFILE>] [--depth <INT>] [--include-dependencies] [--max-string-length <INT>] [--no-compile] [--output-dir <STRING>] [--prettify] [--write-to-file] [...outputs]
+$ hardhat finder --prettify --colorify --contract-path contracts/Example.sol --contract-name Example abi bytecode
 
 @@@@@@@ contracts/Example.sol:Example @@@@@@@
 ======= Abi ======= (contracts/Example.sol:Example)
