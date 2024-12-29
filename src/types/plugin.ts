@@ -30,6 +30,6 @@ export interface FinderUserConfig {
   compact?: boolean;
   noCompile?: boolean;
   runOnCompile?: boolean;
-  writeToFile: boolean;
-  outputDir: string;
+  writeToFile?: boolean;
+  outputDir?: string;
 }
