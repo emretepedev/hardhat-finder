@@ -19,6 +19,11 @@ export const getFinderProxy = (finder: Finder) => {
           );
         }
 
+        // TODO: If the getStorageLayout function is called with noCompile: true,
+        // throw an error with a warning in the Finder.setFor function.
+        // Additionally, move the push process to retrieve the storage layout
+        // in Finder.compile().
+
         // @ts-ignore
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return, prefer-rest-params
         return Reflect.get(...arguments);
