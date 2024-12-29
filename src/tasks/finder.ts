@@ -114,7 +114,7 @@ const finderAction: ActionType<FinderTaskArguments> = async (
         if (!existsSync(dirPath)) {
           mkdirSync(dirPath, { recursive: true });
         }
-        writeFileSync(filePath, content);
+        writeFileSync(filePath, JSON.stringify(result, null, 2), "utf-8");
       }
     }
   }
